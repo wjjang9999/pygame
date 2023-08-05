@@ -1,9 +1,9 @@
 import pygame as py
 import time
+import random
 
-screen_width = 800
-screen_height = 600
-
+screen_width = 2550
+screen_height = 1100
 done = False
 
 black = (0,0,0)
@@ -13,8 +13,8 @@ green = (0,255,0)
 blue = (0,0,255)
 ball_x = int(screen_width / 2)
 ball_y = int(screen_height / 2)
-ball_dx = 4
-ball_dy = 4
+ball_dx = 7.1
+ball_dy = 8.3
 ball_size = 40
 
 py.init()
@@ -41,10 +41,10 @@ while not done:
     screen.fill(white)
 #화면 그리기 구간
     py.draw.circle(screen,blue, [ball_x,ball_y], ball_size , 0)
-    
+
 #화면 업데이트
     py.display.flip()
-#초당 60 프레임으로 업데이트
+#초당 60? 프레임으로 업데이트
     clock.tick(120)
 #게임 종료 
 py.quit()
