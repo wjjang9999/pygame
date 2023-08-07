@@ -5,8 +5,8 @@ import random
 from time import sleep
 
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 2400
+SCREEN_HEIGHT = 1000
 
 
 GRID_SIZE = 20
@@ -45,13 +45,10 @@ class Snake(object):
         new = (cur[0] + (x * GRID_SIZE)), (cur[1] + (y * GRID_SIZE))
 
         if new in self.positions[2:]:
-            sleep(1)
-            self.create()
+            pass
 
-        elif new[0] < 0 or new[0] >= SCREEN_WIDTH or \
-                new[1] < 0 or new[1] >= SCREEN_HEIGHT:
-            sleep(1)
-            self.create()
+        elif new[0] < 0 or new[0] >= SCREEN_WIDTH:
+            pass
 
         else:
             self.positions.insert(0, new)
@@ -60,13 +57,13 @@ class Snake(object):
 
 
     def eat(self):
-        self.length += 1
+        self.length += random.randrange(1,3)
 
  
     def draw(self, screen):
-        red, green, blue = 50 / (self.length - 1), 150, 150 / (self.length - 1)
+        red, green, blue = 50 / (self.length - 1), 250, 250 / (self.length - 1)
         for i, p in enumerate(self.positions):
-            color = (100 + red * i, green, blue * i)
+            color = (0 + red * i, green, blue * i)
             rect = pygame.Rect((p[0], p[1]), (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, color, rect)
 
@@ -111,7 +108,7 @@ class Game(object):
     def run_logic(self):
         self.snake.move()
         self.check_eat(self.snake, self.feed)
-        self.speed = (20 + self.snake.length) / 4
+        self.speed = (10 + self.snake.length) / 2
 
     def check_eat(self, snake, feed):
         if snake.positions[0] == feed.position:
