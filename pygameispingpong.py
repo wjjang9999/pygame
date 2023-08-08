@@ -9,8 +9,10 @@ blue = (20,60,120)
 orange = (250,170,70)
 red = (250,0,0)
 
-screen_width = 480
-screen_height = 640
+enemy_level = 150
+
+screen_width = 800
+screen_height = 1000
 current_path = os.path.dirname(__name__)
 assets_path = os.path.join(current_path, 'assets')
 
@@ -19,30 +21,30 @@ class Ball():
         self.rect = pygame.Rect(screen_width//2,screen_height//2,12,12)
         self.bounce_sound = bounce_sound
         self.dx = 0
-        self.dy = 5
+        self.dy = 10
     def update(self):
         self.rect.x += self.dx
         self.rect.y += self.dy
 
         if self.rect.left < 0:
-            self.dx *= -1
+            self.dx *= -1.01
             self.rect.left = 0
             self.bounce_sound.play()
         elif self.rect.right > screen_width:
-            self.dx *= -1
+            self.dx *= -1.01
             self.rect.right = screen_width
             self.bounce_sound.play()
     def reset(self,x,y):
         self.rect.x =x
         self.rect.y = y
         self.dx = random.randint(-3,3)
-        self.dy = 5
+        self.dy = 10
     def draw(self,screen):
         pygame.draw.rect(screen,orange,self.rect)
 
 class Player():
     def __init__(self,ping_sound):
-        self.rect = pygame.Rect(screen_width//2,screen_height-40,480,15)
+        self.rect = pygame.Rect(screen_width//2,screen_height-40,800,70)
         self.ping_sound = ping_sound
         self.dx = 0
     def update(self, ball):
@@ -52,7 +54,7 @@ class Player():
             self.dx = 0
         if self.rect.colliderect(ball.rect):
             ball.dx = random.randint(-5,5)
-            ball.dy *= -1
+            ball.dy *= -1.01
             ball.rect.bottom = self.rect.top
             self.ping_sound.play()
 
@@ -62,23 +64,24 @@ class Player():
         pygame.draw.rect(screen,red,self.rect)
 class Enemy():
     def __init__(self,pong_sound):
-        self.rect = pygame.Rect(screen_width//2,25,50,15)
+        self.rect = pygame.Rect(screen_width//2,25,3000,70)
         self.pong_sound = pong_sound
+
     def update(self, ball):
         if self.rect.centerx > ball.rect.centerx:
             diff = self.rect.centerx - ball.rect.centerx
-            if diff <= 9:
+            if diff <= enemy_level:
                 self.rect.centerx = ball.rect.centerx
             else:
-                self.rect.x -= 9
+                self.rect.x -= enemy_level
         elif self.rect.centerx < ball.rect.centerx:
             diff = ball.rect.centerx - self.rect.centerx
-            if diff <= 9:
+            if diff <= enemy_level:
                 self.rect.centerx = ball.rect.centerx
             else:
-                self.rect.x += 9
+                self.rect.x += enemy_level
         if self.rect.colliderect(ball.rect):
-            ball.dy *= -1
+            ball.dy *= -1.01
             ball.rect.top = self.rect.bottom
             self.pong_sound.play()
     def draw(self,screen):
@@ -86,9 +89,14 @@ class Enemy():
 class Game():
     def __init__(self):
         bounce_sound = pygame.mixer.Sound(os.path.join(assets_path, 'bounce.wav'))
+
         ping_sound = pygame.mixer.Sound(os.path.join(assets_path, 'ping.wav'))
+
         pong_sound = pygame.mixer.Sound(os.path.join(assets_path, 'pong.wav'))
-        self.font = pygame.font.SysFont("맑은 고딕",50,False,False)
+
+        
+        
+        self.font = pygame.font.SysFont("malgungothic",50,False,False)
         self.ball = Ball(bounce_sound)
         self.player = Player(ping_sound)
         self.enemy = Enemy(pong_sound)
@@ -131,13 +139,13 @@ class Game():
     def display_frame(self,screen):
         screen.fill(blue)
 
-        if self.player_score == 1500:
+        if self.player_score == 10000:
             self.display_message(screen, "승리", white)
             self.player_score = 0
             self.enemy_score = 0
             pygame.time.wait(2000)
 
-        elif self.enemy_score == 1500:
+        elif self.enemy_score == 10000:
             self.display_message(screen,"패배",white)
             self.player_score = 0
             self.enemy_score = 0
@@ -149,9 +157,9 @@ class Game():
             for x in range(0,screen_width,24):
                 pygame.draw.rect(screen,white,[x,screen_height//2,10,10])
             enemy_score_label = self.font.render(str(self.enemy_score), True, white)
-            screen.blit(enemy_score_label, (10,260))
+            screen.blit(enemy_score_label, (10,400))
             player_score_label = self.font.render(str(self.player_score),True,white)
-            screen.blit(player_score_label,(10,340)) 
+            screen.blit(player_score_label,(10,540)) 
 
 def main():
     pygame.init()
@@ -167,7 +175,7 @@ def main():
         game.run_logic()
         game.display_frame(screen)
         pygame.display.flip()
-        clock.tick(1200)
+        clock.tick(120)
     pygame.quit()
 if __name__ == '__main__':
     main()
