@@ -2,8 +2,8 @@ import pygame as py
 import time
 import random
 
-screen_width = 2550
-screen_height = 1100
+screen_width = 600
+screen_height = 600
 done = False
 
 black = (0,0,0)
