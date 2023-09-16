@@ -12,12 +12,17 @@ WHITE = (255, 255, 255)
 GRAY = (150, 150, 150)
 RED = (200, 0, 0)
 
-CAR_COUNT = 56
+CAR_COUNT = 30
 LANE_COUNT = 12
 SPEED = 11
 FPS = 70
 
+
+def random_djrRk():
+        djrRka = random.randrange(1,10000)
+        return djrRka
 class Car():
+    
     def __init__(self, x=0, y=0, dx=0, dy=0):
         self.x = x
         self.y = y
@@ -28,7 +33,6 @@ class Car():
         image_file_list = os.listdir(car_images_path)
         self.image_path_list = [os.path.join(car_images_path, file)
                                 for file in image_file_list if file.endswith(".png")]
-
         crash_image_path = resource_path('assets/crash.png')
         crash_sound_path = resource_path('assets/crash.wav')
         collision_sound_path = resource_path('assets/collision.wav')
@@ -56,8 +60,18 @@ class Car():
         self.load_image()
         self.x = random.randrange(0, SCREEN_WIDTH - self.width)
         self.y = -self.height
-        self.dx = random.randint(-3, 3)
-        self.dy = random.randint(1,11)
+        if random_djrRk() == 1:
+            self.dy = random.randint(5,9)
+            self.dx = 0
+        elif random_djrRk() >= 2 or random_djrRk() <= 9000:
+            self.dy = random.randint(5,17)
+            self.dx = 0
+        else:
+            self.dy = random.randint(5,19)
+            self.dx = random.randint(-3,3)
+            
+            
+
 
     def move(self):
         self.x += self.dx
@@ -112,11 +126,15 @@ class Lane():
 class Game():
     def __init__(self):
         menu_image_path = resource_path('assets/menu_car.png')
+        djrRK_image_path = resource_path('assets/억까가 매우 많을 수 있으니 주의 하시길 바랍니다.png')
         self.image_intro = pygame.image.load(menu_image_path)
+        self.djrRK_image = pygame.image.load(djrRK_image_path)
+        self.djrRK_image = pygame.transform.rotate(self.djrRK_image, 330)
         pygame.mixer.music.load(resource_path('assets/race.wav'))
         font_path = resource_path('assets/NanumGothicCoding-Bold.ttf')
         self.font_40 = pygame.font.Font(font_path, 40)
         self.font_30 = pygame.font.Font(font_path, 30)
+        self.font_90 = pygame.font.Font(font_path, 90)
 
         self.lanes = []
         for i in range(LANE_COUNT):
@@ -128,7 +146,6 @@ class Game():
         for i in range(CAR_COUNT):
             car = Car()
             self.cars.append(car)
-
         self.player = Car()
 
         self.score = 0
@@ -156,25 +173,27 @@ class Game():
             else:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        self.player.dy -= random.randint(-1,7)
+                        self.player.dy -= random.randint(6,7)
                     elif event.key == pygame.K_DOWN:
-                        self.player.dy += random.randint(-1,7)
+                        self.player.dy += random.randint(6,7)
                     elif event.key == pygame.K_LEFT:
-                        self.player.dx -= random.randint(-1,7)
+                        self.player.dx -= random.randint(6,7)
                     elif event.key == pygame.K_RIGHT:
-                        self.player.dx += random.randint(-1,7)
+                        self.player.dx += random.randint(6,7)
+                    elif event.key == pygame.K_p:
+                        self.score += 54378294552345325
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                        self.player.dx = random.randint(-5,5)
+                        self.player.dx = 0
                     elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                        self.player.dy = random.randrange(-5,5)
+                        self.player.dy = 0
 
         return False
 
     def run_logic(self, screen):
         for car in self.cars:
             if car.y > SCREEN_HEIGHT:
-                self.score += 10
+                self.score += random.randrange(0,21)
                 self.highscore += 10
                 car.load_random()
 
@@ -206,15 +225,18 @@ class Game():
 
     def display_menu(self, screen):
         screen.fill(GRAY)   
-        screen.blit(self.image_intro, [40, 150])
+        
+        screen.blit(self.djrRK_image, [1300, 350])
+        screen.blit(self.image_intro, [1025, 150])
         draw_x = int(SCREEN_WIDTH / 2)
         draw_y = int(SCREEN_HEIGHT / 2)
-        self.draw_text(screen, "억까 수동차 게임",
-                       self.font_40, draw_x, draw_y + 50, BLACK)
+        self.draw_text(screen, "수동차 게임",
+                       self.font_90, draw_x, draw_y + 50, BLACK)
         self.draw_text(screen, "점수: " + str(self.score),
                        self.font_40, draw_x, draw_y + 150, WHITE)
         self.draw_text(screen, "스페이스키를 눌러 시작",
                        self.font_30, draw_x, draw_y + 200, RED)
+
 
     def display_frame(self, screen):
         screen.fill(GRAY)   
@@ -232,7 +254,6 @@ class Game():
 
         self.draw_text(screen, "점수: " + str(self.score),
                        self.font_30, 80, 20, BLACK)
-
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
